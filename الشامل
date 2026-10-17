@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة الشامل للمستعمل - النسخة التجريبية</title>
+    <style>
+        /* تصميم ذكي متكامل يعمل بدون إنترنت وخالٍ من الأخطاء الخارجية */
+        @import url('https://googleapis.com');
+        
+        body {
+            font-family: 'Tajawal', Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* شريط التنقل العلوي */
+        .navbar {
+            background-color: #ffffff;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+            color: #059669;
+        }
+
+        .nav-buttons {
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-add {
+            background-color: #059669;
+            color: white;
+            border: none;
+            font-family: 'Tajawal', Arial, sans-serif;
+            font-size: 13px;
+            font-weight: bold;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-left: 8px;
+            cursor: pointer;
+        }
+
+        .btn-login {
+            background: none;
+            border: none;
+            font-family: 'Tajawal', Arial, sans-serif;
+            font-size: 13px;
+            font-weight: bold;
+            color: #4b5563;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        /* واجهة البحث */
+        .hero {
+            background: linear-gradient(to left, #047857, #0d9488);
+            color: white;
+            text-align: center;
+            padding: 35px 15px;
+        }
+
+        .hero h1 { margin: 0 0 10px 0; font-size: 24px; }
+        .hero p { margin: 0 0 20px 0; font-size: 13px; opacity: 0.9; }
+
+        .search-box {
+            max-width: 400px;
+            margin: 0 auto;
+            display: flex;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            outline: none;
+            text-align: right;
+            font-size: 14px;
+        }
+
+        .search-box button {
+            background-color: #f59e0b;
+            color: #0f172a;
+            border: none;
+            padding: 0 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* الأقسام */
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 15px;
+        }
+
+        .cat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border-bottom: 3px solid #059669;
+        }
+
+        .cat-card p { margin: 5px 0 0 0; font-size: 13px; font-weight: bold; color: #374151; }
+
+        /* الإعلانات */
+        .ads-section { padding: 15px; }
+        .ads-section h2 { font-size: 15px; color: #1f2937; margin-bottom: 15px; }
+
+        .ad-card {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border-right: 5px solid #10b981;
+            cursor: pointer;
+        }
+
+        .ad-info { display: flex; align-items: center; }
+        .ad-img-placeholder { width: 50px; height: 50px; background-color: #e5e7eb; border-radius: 6px; margin-left: 12px; }
+        .ad-title { font-size: 13px; font-weight: bold; color: #111827; margin: 0; }
+        .ad-meta { font-size: 11px; color: #9ca3af; margin: 4px 0 0 0; }
+        .ad-price { color: #059669; font-weight: bold; font-size: 14px; }
+
+        footer {
+            background-color: #0f172a;
+            color: #9ca3af;
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            margin-top: 30px;
+        }
+
+        footer a { color: #f59e0b; text-decoration: none; margin: 0 10px; font-weight: bold; cursor: pointer; }
+
+        /* 🚪 النوافذ المنبثقة المدمجة */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .popup-container {
+            background: white;
+            width: 85%;
+            max-width: 420px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 25px 20px;
+            border-radius: 16px;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .btn-close-popup {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #9ca3af;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        /* تفاصيل السلعة */
+        .ad-large-image { width: 100%; height: 140px; background: #e5e7eb; border-radius: 8px; display: flex; justify-content: center; align-items: center; color: #4b5563; font-size: 12px; font-weight: bold; margin-top: 15px; }
+        .ad-popup-title { font-size: 16px; color: #111827; margin: 15px 0 5px 0; text-align: right; }
+        .ad-popup-price { font-size: 18px; color: #059669; font-weight: bold; margin-bottom: 10px; text-align: right; }
+        .ad-popup-meta { display: flex; justify-content: space-between; background: #f9fafb; padding: 8px; border-radius: 6px; font-size: 11px; color: #6b7280; margin-bottom: 15px; }
+        .ad-popup-desc { font-size: 13px; color: #374151; line-height: 1.5; text-align: right; border-bottom: 1px solid #e5e7eb; padding-bottom: 15px; margin-bottom: 15px; }
+
+        .contact-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .btn-contact { padding: 10px; border-radius: 8px; font-size: 12px; font-weight: bold; border: none; color: white; text-align: center; }
+        .btn-call { background-color: #059669; }
+        .btn-chat { background-color: #3b82f6; }
+
+        /* نظام السوم */
+        .comments-section h3 { font-size: 13px; color: #1f2937; text-align: right; margin-bottom: 10px; }
+        .comment-box { background: #f3f4f6; padding: 10px; border-radius: 8px; margin-bottom: 8px; text-align: right; }
+        .comment-user { font-size: 10px; font-weight: bold; color: #6b7280; }
+        .comment-text { font-size: 12px; color: #111827; margin: 3px 0 0 0; }
+
+        .add-comment { display: flex; gap: 5px; margin-top: 10px; }
+        .add-comment input { width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 12px; text-align: right; outline: none; }
+        .add-comment button { background-color: #f59e0b; color: #0f172a; border: none; padding: 0 12px; font-weight: bold; border-radius: 6px; font-size: 12px; }
+
+        /* حقول الدخول */
+        .phone-input-wrapper { display: flex; border: 1px solid #d1d5db; border-radius: 8px; overflow: hidden; margin-top: 10px; }
+        .phone-input-wrapper span { padding: 10px; background: #e5e7eb; font-size: 13px; color: #374151; font-weight: bold; direction: ltr; }
+        .phone-input-wrapper input { width: 100%; padding: 10px; border: none; outline: none; font-size: 14px; text-align: left; }
+        .btn-send { width: 100%; background-color: #f59e0b; color: #0f172a; border: none; padding: 12px; font-size: 13px; font-weight: bold; border-radius: 8px; margin-top: 15px; }
+
+        .commission-text { text-align: right; font-size: 13px; color: #374151; line-height: 1.6; }
+        .commission-text h4 { margin: 15px 0 5px 0; color: #059669; }
+    </style>
+</head>
+<body>
+
+    <!-- شريط التنقل العلوي -->
+    <div class="navbar">
+        <div class="logo">الشامل للمستعمل</div>
+        <div class="nav-buttons">
+            <button class="btn-add" onclick="alert('يرجى تسجيل الدخول أولاً لإضافة إعلان')">➕ إضافة إعلان</button>
+            <button class="btn-login" onclick="togglePopup('loginPopup', true)">تسجيل الدخول</button>
+        </div>
+    </div>
+
+    <!-- واجهة البحث -->
+    <div class="hero">
+        <h1>منصة الشامل للمستعمل</h1>
+        <p>سوقك المفتوح لبيع وشراء المنتجات المستعملة بكل سهولة وبدون أي عمولات</p>
+        <div class="search-box">
+            <input type="text" placeholder="ابحث عن سيارة، جهاز، أثاث...">
+            <button>بحث</button>
+        </div>
+    </div>
+
+    <!-- الأقسام الرئيسية -->
+    <div class="categories">
+        <div class="cat-card"><p>🚗 السيارات</p></div>
+        <div class="cat-card"><p>📱 الأجهزة</p></div>
+        <div class="cat-card"><p>🛋️ الأثاث</p></div>
+        <div class="cat-card"><p>🏢 العقارات</p></div>
+        <div class="cat-card"><p>🔧 الخدمات</p></div>
+        <div class="cat-card"><p>🧸 كل شيء</p></div>
+    </div>
+
+    <!-- قسم الإعلانات -->
+    <div class="ads-section">
+        <h2>أحدث الإعلانات المستعملة</h2>
+        
+        <div class="ad-card" onclick="togglePopup('adPopup', true)">
+            <div class="ad-info">
+                <div class="ad-img-placeholder"></div>
+                <div>
+                    <p class="ad-title">آيفون 14 برومكس 256 جيجا - مستعمل نظيف</p>
+                    <p class="ad-meta">قبل ساعتين • الرياض</p>
+                </div>
+            </div>
+            <div class="ad-price">2,800 ريال</div>
+        </div>
+
